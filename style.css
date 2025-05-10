@@ -10,8 +10,7 @@ body {
     color: #333;
     overflow-y: auto; /* 允許 body 滾動 */
     overflow-x: hidden; /* 防止水平滾動 */
-    /* === 給 body 底部增加內邊距，避免播放器遮擋內容 === */
-    padding-bottom: 80px; /* 播放器高度 + 底部距離 + 一些額外空間 */
+    padding-bottom: 80px; /* 避免播放器遮擋內容 */
 }
 
 #container {
@@ -21,8 +20,8 @@ body {
     display: flex; /* Flexbox 讓 #cardContent 置中 */
     justify-content: center;
     align-items: center;
-    padding: 20px; /* 容器內邊距 */
-    box-sizing: border-box; /* 內邊距包含在寬高內 */
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 /* ====== 開場面板樣式 ====== */
@@ -72,14 +71,8 @@ body {
     z-index: 11;
 }
 
-#opening-text h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
-}
-
-#opening-text p {
-    font-size: 1.5em;
-}
+#opening-text h1 { font-size: 2.5em; margin-bottom: 10px; }
+#opening-text p { font-size: 1.5em; }
 /* ====== 開場面板樣式結束 ====== */
 
 
@@ -91,7 +84,7 @@ body {
     transform: translate(-50%, -50%);
     width: 90%;
     max-width: 600px;
-    opacity: 1;
+    opacity: 0; /* 初始隱藏 */
     transition: opacity 1s ease-in-out;
     pointer-events: none;
     z-index: 5;
@@ -109,32 +102,22 @@ body {
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     text-align: center;
-    /* 設定最大高度並允許內部滾動 */
-    max-height: 80vh; /* 卡片最大高度為視窗高度的 80% */
-    overflow-y: auto; /* 垂直滾動條 */
-    overflow-x: hidden; /* 隱藏水平滾動條 */
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
     box-sizing: border-box;
-    /* 增加底部內邊距，讓內容可以滾到底 */
     padding-bottom: 40px;
 }
 
-.card h1 {
-    color: #d62d20;
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 2.5em;
-}
+.card h1 { color: #d62d20; margin-top: 0; margin-bottom: 20px; font-size: 2.5em; }
 
-/* === 響應式圖片樣式 === */
 .mom-photo {
-    max-width: 100%; /* 最大寬度不超過父容器 */
-    height: auto; /* 高度自動，保持比例 */
+    max-width: 100%;
+    height: auto;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* 讓圖片獨佔一行並水平居中 */
     display: block;
-    margin: 10px auto 20px auto; /* 上10px, 左右自動(居中), 下20px */
-    /* 如果需要像素上限，例如手機上不超過250px，寬螢幕隨容器 */
+    margin: 10px auto 20px auto;
     /* max-width: 250px; */
 }
 
@@ -153,10 +136,7 @@ body {
     margin-top: 20px;
 }
 
-/* 初始隱藏卡片內容容器 */
-.hidden {
-    display: none;
-}
+.hidden { display: none; }
 /* ====== 卡片內容樣式結束 ====== */
 
 
@@ -165,42 +145,42 @@ body {
     position: fixed;
     bottom: 20px;
     left: 50%;
-    /* 最終狀態的 transform */
-    transform: translateX(-50%) scale(1); /* 最終為正常大小 */
-    width: 95%; /* 最終寬度 */
-    max-width: 400px; /* 最終最大寬度 */
-    height: 60px; /* 最終高度 (包含歌詞) */
-    background-color: rgba(0, 0, 0, 0.7); /* 最終背景色 */
-    color: white; /* 最終文字顏色 */
-    border-radius: 30px; /* 最終圓角 */
+    transform: translateX(-50%) scale(1);
+    width: 95%;
+    max-width: 400px;
+    /* REMOVE fixed height, add min-height */
+    /* height: 60px; */
+    min-height: 60px; /* 确保最小高度 */
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 30px;
     display: flex;
-    align-items: center;
-    padding: 5px 15px; /* 最終內邊距 */
+    align-items: center; /* 垂直居中播放控制按钮和信息区 */
+    padding: 5px 15px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     z-index: 100;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     box-sizing: border-box;
-    overflow: hidden; /* 隱藏初始狀態下超出的小內容 */
+    overflow: hidden; /* 保持以防止内容溢出播放器边界 */
 
-    /* === 動畫過渡效果 === */
-    transition: width 0.6s ease-out, height 0.6s ease-out, padding 0.6s ease-out, border-radius 0.6s ease-out, transform 0.6s ease-out, background-color 0.6s ease-out;
-    opacity: 1; /* 播放器在初始和結束狀態都是可見的 */
+    /* === 动画过渡效果 === */
+    /* Include height and min-height in transition */
+    transition: width 0.6s ease-out, height 0.6s ease-out, min-height 0.6s ease-out, padding 0.6s ease-out, border-radius 0.6s ease-out, transform 0.6s ease-out, background-color 0.6s ease-out;
+    opacity: 1;
 }
 
 /* === 播放器的初始狀態 (.player-initial) === */
 #musicPlayer.player-initial {
-    /* 縮小後的尺寸和形狀 */
-    width: 120px; /* 初始寬度範例 */
-    height: 35px; /* 初始高度範例 */
-    border-radius: 18px; /* 初始圓角範例 */
-    padding: 0; /* 初始無內邊距 */
+    width: 120px;
+    height: 35px; /* 初始固定高度 */
+    border-radius: 18px;
+    padding: 0;
     opacity: 1;
-    background-color: rgba(0, 0, 0, 0.9); /* 初始黑色背景 */
-    /* 保持水平置中，並稍微縮小視覺效果 */
-    transform: translate(-50%, 0) scale(0.9); /* 初始整體稍微縮小 */
+    background-color: rgba(0, 0, 0, 0.9);
+    transform: translate(-50%, 0) scale(0.9);
+    min-height: 35px; /* 初始状态下的最小高度 */
 }
-
 
 /* 播放器內部控制區 */
 .player-controls {
@@ -218,44 +198,53 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    height: 100%; /* 保持高度以方便点击 */
 }
 
 /* 播放器資訊區 (歌名, 歌詞, 進度條) */
 .player-info {
     flex-grow: 1;
-    overflow: hidden;
+    overflow: hidden; /* 信息区内部可以隐藏溢出，但允许自身高度增长 */
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: column; /* 歌名/歌詞和進度條垂直排列 */
+    /* === 垂直對齊改為從頂部開始 === */
+    justify-content: flex-start; /* 内容从顶部开始堆叠 */
+    /* === 添加垂直間距 === */
+    gap: 2px; /* 在直接子元素之间添加间距 */
 }
 
 /* 歌名樣式 */
 .song-title {
     font-size: 0.85em;
-    white-space: nowrap;
+    white-space: nowrap; /* 歌名通常不需要換行 */
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: left;
-    height: 1.2em;
+    height: 1.2em; /* 保持固定高度 */
     line-height: 1.2em;
     opacity: 1;
     transition: opacity 0.3s ease-out;
     flex-shrink: 0;
+    /* margin-bottom: 2px; */ /* gap 会处理间距 */
 }
 
+/* === 歌詞行樣式 - 允許換行 === */
 .lyric-line {
-    /* ... 原有樣式 ... */
-    font-size: 1.2em; /* <-- 調整這個值，例如 1em, 1.1em, 1.2em 等 */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
-    margin-bottom: 1.3px;
-    height: 1.3em; /* <-- 可能需要根據新的 font-size 調整這個值 */
-    line-height: 1.3em; /* <-- 與 height 保持一致 */
+    /* === 調整字體大小 === */
+    font-size: 1.2em; /* 可以根據需要調整 */
+    /* === 移除阻止換行的樣式 === */
+    white-space: normal; /* 允許換行 */
+    overflow: visible; /* 允許內容超出自身容器 (但会被父容器 #musicPlayer 的 overflow: hidden 裁剪) */
+    text-overflow: clip; /* 不顯示省略號 */
+    /* === 移除固定高度，讓高度隨內容自動調整 === */
+    height: auto;
+    /* line-height: 1.3em; */ /* 移除固定行高 */
+    line-height: 1.5; /* 設定標準行高 */
+
+    text-align: center; /* 歌詞居中 */
+    margin-bottom: 2px; /* 和下方進度條的間距 (可以由 gap 替代一部分) */
     color: #ddd;
-    opacity: 0;
+    opacity: 0; /* 初始隱藏 */
     transition: opacity 0.4s ease-out;
     flex-shrink: 0;
 }
@@ -266,6 +255,7 @@ body {
     align-items: center;
     font-size: 0.8em;
     flex-shrink: 0;
+    /* margin-top: 2px; */ /* gap 会处理间距 */
 }
 
 /* 進度條 input 樣式 */
@@ -284,9 +274,7 @@ body {
     border-radius: 2px;
 }
 
-#progressBar:hover {
-    opacity: 1;
-}
+#progressBar:hover { opacity: 1; }
 
 /* 進度條拖動點的樣式 */
 #progressBar::-webkit-slider-thumb {
@@ -326,8 +314,8 @@ body {
 #musicPlayer.player-initial .player-info {
      opacity: 0;
      pointer-events: none;
-     transform: translateY(0); /* 在小播放器裡保持原位 */
-     transition-delay: 0s; /* 初始狀態下不延遲過渡 */
+     transform: translateY(0);
+     transition-delay: 0s;
 }
 
 /* 播放器內部內容的最終狀態 (顯示) */
@@ -336,6 +324,7 @@ body {
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0);
-    transition-delay: 0.5s; /* 最終狀態下，內容淡入延遲 0.5 秒 */
+    /* === 调整内容淡入的延迟，使其在播放器放大动画完成后开始 === */
+    transition-delay: 0.5s; /* 例如，播放器放大动画是 0.6s，可以在 0.5s 后开始淡入 */
 }
 /* ====== 音訊播放器樣式結束 ====== */
