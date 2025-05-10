@@ -8,9 +8,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const musicPlayer = document.getElementById('musicPlayer');
     const playerPlayPauseBtn = musicPlayer ? musicPlayer.querySelector('#playerPlayPause') : null;
     const songTitleEl = musicPlayer ? musicPlayer.querySelector('.song-title') : null;
-    // === 單行歌詞顯示元素 ===
-    const lyricLineEl = musicPlayer ? musicPlayer.querySelector('.lyric-line') : null;
-    // =========================
+
+    // === 歌詞顯示元素 (三行) ===
+    const lyricDisplayContainer = musicPlayer ? musicPlayer.querySelector('.lyric-display-container') : null;
+    const prevLyricEl = lyricDisplayContainer ? lyricDisplayContainer.querySelector('.lyric-line.prev-lyric') : null;
+    const currentLyricEl = lyricDisplayContainer ? lyricDisplayContainer.querySelector('.lyric-line.current-lyric') : null;
+    const nextLyricEl = lyricDisplayContainer ? lyricDisplayContainer.querySelector('.lyric-line.next-lyric') : null;
+    // ==========================
+
     const progressBar = musicPlayer ? musicPlayer.querySelector('#progressBar') : null;
     const currentTimeEl = musicPlayer ? musicPlayer.querySelector('.current-time') : null;
     const durationEl = musicPlayer ? musicPlayer.querySelector('.duration') : null;
@@ -22,7 +27,10 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("找到 audio 元素嗎?", backgroundMusic);
     console.log("找到播放器容器元素嗎?", musicPlayer);
     console.log("找到播放器按鈕 #playerPlayPause 嗎?", playerPlayPauseBtn);
-    console.log("找到歌詞行元素 .lyric-line 嗎?", lyricLineEl);
+    console.log("找到歌詞顯示容器 .lyric-display-container 嗎?", lyricDisplayContainer);
+    console.log("找到前一句歌詞元素 .prev-lyric 嗎?", prevLyricEl);
+    console.log("找到當前歌詞元素 .current-lyric 嗎?", currentLyricEl);
+    console.log("找到後一句歌詞元素 .next-lyric 嗎?", nextLyricEl);
     console.log("找到進度條 #progressBar 嗎?", progressBar);
 
 
@@ -39,14 +47,12 @@ document.addEventListener('DOMContentLoaded', function() {
      // 設定初始歌名
     if (songTitleEl) {
         songTitleEl.textContent = '聽媽媽的話 - 周杰倫';
-        songTitleEl.style.opacity = 1; // 確保初始是可見的
+        songTitleEl.style.opacity = 1;
     }
-    // 清空初始歌詞顯示
-    if (lyricLineEl) {
-        lyricLineEl.textContent = '';
-        lyricLineEl.style.opacity = 0; // 確保初始歌詞顯示元素是透明的
-        lyricLineEl.style.color = '#ddd'; // 恢復正常顏色
-    }
+    // 清空初始三行歌詞顯示
+    if (prevLyricEl) { prevLyricEl.textContent = ''; prevLyricEl.style.opacity = 0;}
+    if (currentLyricEl) { currentLyricEl.textContent = ''; currentLyricEl.style.opacity = 0; }
+    if (nextLyricEl) { nextLyricEl.textContent = ''; nextLyricEl.style.opacity = 0; }
 
 
     // --- 輔助函式 ---
@@ -75,26 +81,30 @@ document.addEventListener('DOMContentLoaded', function() {
             lyrics = parseLRC(lrcText);
             console.log("🎶 歌詞解析完成。行數:", lyrics.length, lyrics);
 
-             if (!lyrics.length && lyricLineEl) {
-                 lyricLineEl.textContent = "無歌詞數據";
-                 lyricLineEl.style.opacity = 0.8;
-                 lyricLineEl.style.color = '#bbb';
+             if (!lyrics.length && currentLyricEl) {
+                 currentLyricEl.textContent = "無歌詞數據";
+                 currentLyricEl.style.opacity = 0.8;
+                 currentLyricEl.style.color = '#bbb';
                  console.warn("❌ LRC 文件沒有解析到任何帶時間戳的歌詞行。");
-             } else if (lyricLineEl) {
-                 lyricLineEl.textContent = ''; // 初始清空歌詞行
-                 lyricLineEl.style.opacity = 0;
-                 lyricLineEl.style.color = '#ddd'; // 恢复正常颜色
+             } else if (currentLyricEl) {
+                 currentLyricEl.textContent = '';
+                 currentLyricEl.style.opacity = 0;
+                 currentLyricEl.style.color = 'white';
              }
+             if (prevLyricEl) { prevLyricEl.textContent = ''; prevLyricEl.style.opacity = 0; }
+             if (nextLyricEl) { nextLyricEl.textContent = ''; nextLyricEl.style.opacity = 0; }
 
 
         } catch (e) {
             console.error("❌ 載入或解析 LRC 檔案失敗:", e);
             lyrics = [];
-            if (lyricLineEl) {
-                 lyricLineEl.textContent = "無法載入歌詞";
-                 lyricLineEl.style.opacity = 1;
-                 lyricLineEl.style.color = 'red';
+            if (currentLyricEl) {
+                 currentLyricEl.textContent = "無法載入歌詞";
+                 currentLyricEl.style.opacity = 1;
+                 currentLyricEl.style.color = 'red';
             }
+            if (prevLyricEl) { prevLyricEl.textContent = ''; prevLyricEl.style.opacity = 0; }
+            if (nextLyricEl) { nextLyricEl.textContent = ''; nextLyricEl.style.opacity = 0; }
         }
     }
 
@@ -117,16 +127,17 @@ document.addEventListener('DOMContentLoaded', function() {
         return parsedLyrics;
     }
 
-    // === 根據當前時間更新單行歌詞顯示 ===
     function updateLyricDisplay(currentTime) {
-        if (!lyricLineEl || lyrics.length === 0) {
-             if (lyricLineEl && (lyricLineEl.textContent === "無法載入歌詞" || lyricLineEl.textContent === "無歌詞數據")) {
-                 lyricLineEl.style.opacity = 1;
-                 lyricLineEl.style.color = lyricLineEl.textContent === "無法載入歌詞" ? 'red' : '#bbb';
-            } else if (lyricLineEl) {
-                 lyricLineEl.textContent = '';
-                 lyricLineEl.style.opacity = 0;
+        if (!prevLyricEl || !currentLyricEl || !nextLyricEl || lyrics.length === 0) {
+             if (currentLyricEl && (currentLyricEl.textContent === "無法載載歌詞" || currentLyricEl.textContent === "無歌詞數據")) { // Fixed typo here
+                 currentLyricEl.style.opacity = 1;
+                 currentLyricEl.style.color = currentLyricEl.textContent === "無法載載歌詞" ? 'red' : '#bbb'; // Fixed typo here
+            } else if (currentLyricEl) {
+                 currentLyricEl.textContent = '';
+                 currentLyricEl.style.opacity = 0;
             }
+            if(prevLyricEl) { prevLyricEl.textContent = ''; prevLyricEl.style.opacity = 0; }
+            if(nextLyricEl) { nextLyricEl.textContent = ''; nextLyricEl.style.opacity = 0; }
             return;
         }
 
@@ -141,59 +152,101 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (foundIndex !== currentLyricIndex && foundIndex !== -1) {
             currentLyricIndex = foundIndex;
-            if (lyricLineEl) {
-                lyricLineEl.textContent = lyrics[currentLyricIndex].text;
-                lyricLineEl.style.opacity = 0;
-                lyricLineEl.style.color = '#ddd';
-                setTimeout(() => { lyricLineEl.style.opacity = 1; }, 50);
+
+            const prevIndex = currentLyricIndex - 1;
+            if (prevLyricEl) {
+                prevLyricEl.textContent = (prevIndex >= 0 && prevIndex < lyrics.length) ? lyrics[prevIndex].text : '';
+                prevLyricEl.style.opacity = prevLyricEl.textContent ? 0.7 : 0;
+                prevLyricEl.style.color = '#bbb';
             }
 
-            console.log(`🎵 更新歌詞到 [${formatTime(lyrics[currentLyricIndex].time)}] ${lyrics[currentLyricIndex].text}`);
+            if (currentLyricEl) {
+                currentLyricEl.textContent = lyrics[currentLyricIndex].text;
+                currentLyricEl.style.opacity = 0;
+                currentLyricEl.style.color = 'white';
+                setTimeout(() => { currentLyricEl.style.opacity = 1; }, 50);
+            }
+
+            const nextIndex = currentLyricIndex + 1;
+             if (nextLyricEl) {
+                nextLyricEl.textContent = (nextIndex >= 0 && nextIndex < lyrics.length) ? lyrics[nextIndex].text : '';
+                nextLyricEl.style.opacity = nextLyricEl.textContent ? 0.7 : 0;
+                 nextLyricEl.style.color = '#bbb';
+            }
+
+            console.log(`🎵 更新三行歌詞到 [${formatTime(lyrics[currentLyricIndex].time)}] ${lyrics[currentLyricIndex].text}`);
 
         } else if (currentTime < (lyrics[0]?.time || 0) && currentLyricIndex !== -1) {
-             if (lyricLineEl) {
-                 lyricLineEl.textContent = '';
-                 lyricLineEl.style.opacity = 0;
-             }
+             if (prevLyricEl) prevLyricEl.textContent = '';
+             if (currentLyricEl) currentLyricEl.textContent = '';
+             if (nextLyricEl) nextLyricEl.textContent = '';
+             if (prevLyricEl) prevLyricEl.style.opacity = 0;
+             if (currentLyricEl) currentLyricEl.style.opacity = 0;
+             if (nextLyricEl) nextLyricEl.style.opacity = 0;
              currentLyricIndex = -1;
-             console.log("🎵 時間回跳到開頭，清空歌詞顯示。");
+             console.log("🎵 時間回跳到開頭，清空所有歌詞顯示。");
         } else if (currentTime >= backgroundMusic.duration && currentLyricIndex !== -1 && lyrics.length > 0 && currentTime >= lyrics[lyrics.length - 1].time) {
-             if (lyricLineEl) {
-                 lyricLineEl.textContent = '';
-                 lyricLineEl.style.opacity = 0;
-             }
+             if (prevLyricEl) prevLyricEl.textContent = '';
+             if (currentLyricEl) currentLyricEl.textContent = '';
+             if (nextLyricEl) nextLyricEl.textContent = '';
+             if (prevLyricEl) prevLyricEl.style.opacity = 0;
+             if (currentLyricEl) currentLyricEl.style.opacity = 0;
+             if (nextLyricEl) nextLyricEl.style.opacity = 0;
              currentLyricIndex = -1;
-             console.log("🎵 歌曲結束或時間超出，清空歌詞顯示。");
+             console.log("🎵 歌曲結束或時間超出，清空所有歌詞顯示。");
         }
 
 
-        // === 控制歌名和單行歌詞的顯示/隱藏 ===
-        if (songTitleEl && lyricLineEl && musicPlayer && musicPlayer.classList.contains('content-visible')) {
-             if (backgroundMusic.currentTime > 0 && !backgroundMusic.paused && lyrics.length > 0 && lyricLineEl.textContent && lyricLineEl.textContent !== "無法載入歌詞" && lyricLineEl.textContent !== "無歌詞數據") {
+        if (songTitleEl && lyricDisplayContainer && musicPlayer && musicPlayer.classList.contains('content-visible')) {
+             if (backgroundMusic.currentTime > 0 && !backgroundMusic.paused && lyrics.length > 0) {
                   songTitleEl.style.opacity = 0;
-                  lyricLineEl.style.opacity = 1;
              } else {
                   songTitleEl.style.opacity = 1;
-                  if (lyricLineEl && (lyricLineEl.textContent === "無法載入歌詞" || lyricLineEl.textContent === "無歌詞數據")) {
-                       lyricLineEl.style.opacity = 1;
-                  } else if (lyricLineEl) {
-                       lyricLineEl.style.opacity = 0;
+                  if (currentLyricEl && (currentLyricEl.textContent === "無法載載歌詞" || currentLyricEl.textContent === "無歌詞數據")) { // Fixed typo here
+                       currentLyricEl.style.opacity = 1;
+                  } else if (currentLyricEl) {
+                       if (prevLyricEl) prevLyricEl.style.opacity = 0;
+                       if (currentLyricEl) currentLyricEl.style.opacity = 0;
+                       if (nextLyricEl) nextLyricEl.style.opacity = 0;
                   }
              }
         } else if (songTitleEl && musicPlayer && !musicPlayer.classList.contains('content-visible')) {
         }
     }
-    // === 歌詞相關函式結束 ===
 
+    // --- 卡片開啟邏輯 (修正位置，移到元素檢查通過後) ---
 
-    // --- 卡片開啟邏輯 ---
-    if (openingPanels && cardContent) {
+    // --- 音樂播放器邏輯 ---
+    let isPlaying = false;
+
+    // 檢查所有必需的音樂播放器相關元素是否存在
+    // 如果存在，則啟用播放器功能和開卡動畫觸發
+    if (backgroundMusic && musicPlayer && playerPlayPauseBtn && songTitleEl && lyricDisplayContainer && prevLyricEl && currentLyricEl && nextLyricEl && progressBar && currentTimeEl && durationEl && openingPanels && cardContent) { // Added openingPanels and cardContent check here
+         console.log("✅ 所有音樂播放器和開卡所需元素均已找到。啟用功能和事件監聽器。");
+
+        loadAndParseLRC("聽媽媽的話.lrc"); // 請確保你的 LRC 檔案名稱和這裡一致！
+
+        backgroundMusic.onloadedmetadata = () => { /* ... */ };
+        backgroundMusic.ontimeupdate = () => { /* ... */ updateLyricDisplay(backgroundMusic.currentTime); };
+        backgroundMusic.onended = () => { /* ... */ };
+        backgroundMusic.onerror = (e) => { /* ... */ };
+        backgroundMusic.onplay = () => { /* ... */ };
+        backgroundMusic.onpause = () => { /* ... */ };
+
+        playerPlayPauseBtn.addEventListener('click', function() { /* ... */ });
+
+        if (progressBar && backgroundMusic) {
+            progressBar.addEventListener('input', function() { /* ... */ updateLyricDisplay(backgroundMusic.currentTime); });
+             progressBar.addEventListener('change', function() { /* ... */ });
+        }
+
+        // === 開卡面板點擊監聽器 (移到這裡) ===
         openingPanels.addEventListener('click', function() {
             console.log("✅ 開場面板被點擊了！開始開卡和播放器動畫...");
 
             if (musicPlayer && musicPlayer.classList.contains('player-initial')) {
                 console.log("▶️ 觸發音樂播放器動畫：從初始狀態彈出。");
-                musicPlayer.classList.remove('player-initial');
+                 musicPlayer.classList.remove('player-initial');
                  const playerExpandDuration = 600;
                  const contentFadeDelay = 400;
                  setTimeout(() => {
@@ -207,12 +260,14 @@ document.addEventListener('DOMContentLoaded', function() {
                            backgroundMusic.play().then(() => { console.log("🎵 開卡時自動播放成功！"); }).catch(e => { console.log("🔇 開卡時自動播放失敗:", e); });
                       } else if (backgroundMusic && !backgroundMusic.paused) {
                            console.log("🎵 開卡時，音樂已在播放。");
-                            if (lyricLineEl && lyrics.length > 0) { lyricLineEl.style.opacity = 1; if(songTitleEl) songTitleEl.style.opacity = 0; }
+                            if (currentLyricEl && lyrics.length > 0) { // Check if currentLyricEl is found and lyrics exist
+                                // currentLyricEl.style.opacity = 1; // Let updateLyricDisplay handle opacity
+                                if(songTitleEl) songTitleEl.style.opacity = 0;
+                            }
                        } else if (backgroundMusic) {
                            console.log("🔊 開卡時，音頻狀態不是暫停或播放:", backgroundMusic.readyState);
                        }
                  }, contentFadeDelay);
-
             } else if (musicPlayer && !musicPlayer.classList.contains('content-visible')) {
                  console.log("▶️ 播放器已非初始狀態，但內容是隱藏的。顯示內容並嘗試播放。");
                  const controls = musicPlayer.querySelector('.player-controls');
@@ -245,131 +300,12 @@ document.addEventListener('DOMContentLoaded', function() {
                  }
             }, textFadeOutDuration + panelAnimationDuration);
         });
-    } else {
-        console.error("❌ 無法找到開場面板 (#opening-panels) 或卡片內容 (#cardContent) 元素。開卡功能可能無法運作。");
-    }
+        // === 開卡面板點擊監聽器結束 ===
 
-
-    // --- 音樂播放器邏輯 ---
-    let isPlaying = false;
-
-    if (backgroundMusic && musicPlayer && playerPlayPauseBtn && songTitleEl && lyricLineEl && progressBar && currentTimeEl && durationEl) {
-
-        loadAndParseLRC("song.lrc"); // 請確保你的 LRC 檔案名稱和這裡一致
-
-        backgroundMusic.onloadedmetadata = () => {
-            console.log("🎵 音訊 metadata 載入完成。總時長:", backgroundMusic.duration);
-            if (progressBar) progressBar.max = backgroundMusic.duration;
-            if (durationEl) durationEl.textContent = formatTime(backgroundMusic.duration);
-        };
-
-        backgroundMusic.ontimeupdate = () => {
-            if (progressBar) progressBar.value = backgroundMusic.currentTime;
-            if (currentTimeEl) currentTimeEl.textContent = formatTime(backgroundMusic.currentTime);
-            updateLyricDisplay(backgroundMusic.currentTime);
-        };
-
-        backgroundMusic.onended = () => {
-            console.log("🎵 音訊播放結束。");
-            isPlaying = false;
-            if (playerPlayPauseBtn) playerPlayPauseBtn.textContent = '▶️';
-            if (progressBar) progressBar.value = 0;
-            if (currentTimeEl) currentTimeEl.textContent = '0:00';
-            if (lyricLineEl) { lyricLineEl.textContent = ''; lyricLineEl.style.opacity = 0;}
-            currentLyricIndex = -1;
-            if (songTitleEl) songTitleEl.style.opacity = 1;
-        };
-
-        backgroundMusic.onerror = (e) => {
-             console.error("❌ 音訊播放錯誤:", e);
-             isPlaying = false;
-             if (playerPlayPauseBtn) playerPlayPauseBtn.textContent = '▶️';
-             if (lyricLineEl) {
-                  lyricLineEl.textContent = "播放錯誤";
-                  lyricLineEl.style.opacity = 1;
-                  lyricLineEl.style.color = 'red';
-             }
-              if (songTitleEl) songTitleEl.style.opacity = 0;
-        };
-
-        backgroundMusic.onplay = () => {
-            console.log("🎵 音訊狀態變為：播放中");
-            isPlaying = true;
-            if (playerPlayPauseBtn) playerPlayPauseBtn.textContent = '⏸️';
-            if (songTitleEl) songTitleEl.style.opacity = 0;
-             if (lyricLineEl && (lyricLineEl.textContent === "無法載入歌詞" || lyricLineEl.textContent === "無歌詞數據")) {
-                  lyricLineEl.style.opacity = 1;
-             } else if (lyricLineEl) {
-                  lyricLineEl.style.opacity = 1;
-                  lyricLineEl.style.color = '#ddd';
-             }
-        };
-
-         backgroundMusic.onpause = () => {
-             console.log("🎵 音訊狀態變為：已暫停");
-             isPlaying = false;
-             if (playerPlayPauseBtn) playerPlayPauseBtn.textContent = '▶️';
-              if (songTitleEl) songTitleEl.style.opacity = 1;
-              if (lyricLineEl && lyricLineEl.textContent && lyricLineEl.textContent !== "無法載入歌詞" && lyricLineEl.textContent !== "無歌詞數據") {
-                  lyricLineEl.style.opacity = 0.5;
-              } else if (lyricLineEl) {
-              }
-         };
-
-        playerPlayPauseBtn.addEventListener('click', function() {
-            console.log("🖱️ 播放/暫停按鈕被點擊！點擊前的 isPlaying:", isPlaying, " Audio paused:", backgroundMusic.paused);
-            if (musicPlayer.classList.contains('player-initial')) {
-                console.log("🖱️ 點擊了小播放器，觸發放大動畫和內容淡入。");
-                 musicPlayer.classList.remove('player-initial');
-                 const playerExpandDuration = 600;
-                 const contentFadeDelay = 400;
-                 setTimeout(() => {
-                      const controls = musicPlayer.querySelector('.player-controls');
-                      const info = musicPlayer.querySelector('.player-info');
-                      if (controls) controls.classList.add('content-visible');
-                      if (info) info.classList.add('content-visible');
-                      console.log("▶️ 播放器內容設定為可見狀態 (通過點擊小播放器觸發)。");
-                      if (backgroundMusic && backgroundMusic.paused) {
-                           console.log("🎵 點擊小播放器，嘗試播放音樂...");
-                           backgroundMusic.play().then(() => { console.log("🎵 點擊小播放器，播放成功！"); }).catch(e => { console.log("🔇 點擊小播放器，播放失敗:", e); });
-                      } else if (backgroundMusic && !backgroundMusic.paused) {
-                           console.log("🎵 點擊小播放器，音樂已在播放。");
-                            if (lyricLineEl && lyrics.length > 0) { lyricLineEl.style.opacity = 1; if(songTitleEl) songTitleEl.style.opacity = 0; }
-                       } else if (backgroundMusic) {
-                           console.log("🔊 點擊小播放器，音頻狀態不是暫停或播放:", backgroundMusic.readyState);
-                       }
-                 }, contentFadeDelay);
-            } else {
-                console.log("🖱️ 點擊了展開的播放器，執行正常播放/暫停。");
-                if (backgroundMusic.paused) {
-                    console.log("🎧 嘗試從暫停狀態播放...");
-                     backgroundMusic.play().then(() => { console.log("🎵 play() Promise resolved (成功恢復播放)。"); }).catch(e => { console.log("❌ play() Promise rejected (恢復播放失敗)。", e); });
-                } else {
-                    console.log("⏸️ 嘗試暫停音樂...");
-                    backgroundMusic.pause();
-                }
-            }
-        });
-
-        if (progressBar && backgroundMusic) {
-            progressBar.addEventListener('input', function() {
-                console.log("🖱️ 進度條被拖動到:", progressBar.value);
-                backgroundMusic.currentTime = progressBar.value;
-                 updateLyricDisplay(backgroundMusic.currentTime);
-            });
-             progressBar.addEventListener('change', function() {
-                   if (!backgroundMusic.paused && isPlaying) {
-                       console.log("🖱️ 進度條拖動結束，恢復播放...");
-                       backgroundMusic.play().catch(e => console.log("恢復播放失敗:", e));
-                   } else if (backgroundMusic.paused && !isPlaying) {
-                       console.log("🖱️ 進度條拖動結束，維持暫停。");
-                   }
-             });
-        }
 
     } else {
-        console.error("❌ 無法找到一個或多個音樂播放器相關元素。音樂播放器功能可能無法運作。");
-        console.log("Debug: player:", musicPlayer, "btn:", playerPlayPauseBtn, "title:", songTitleEl, "lyric:", lyricLineEl, "bar:", progressBar, "current time:", currentTimeEl, "duration:", durationEl);
+        console.error("❌ 無法找到一個或多個音樂播放器或開卡所需元素。音樂播放器和開卡功能可能無法運作。");
+        console.log("Debug: player:", musicPlayer, "btn:", playerPlayPauseBtn, "title:", songTitleEl, "lyric container:", lyricDisplayContainer, "prev:", prevLyricEl, "current:", currentLyricEl, "next:", nextLyricEl, "bar:", progressBar, "current time:", currentTimeEl, "duration:", durationEl, "opening panels:", openingPanels, "card content:", cardContent);
     }
 
 });
