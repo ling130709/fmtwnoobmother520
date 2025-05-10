@@ -129,9 +129,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateLyricDisplay(currentTime) {
         if (!prevLyricEl || !currentLyricEl || !nextLyricEl || lyrics.length === 0) {
-             if (currentLyricEl && (currentLyricEl.textContent === "無法載入歌詞" || currentLyricEl.textContent === "無歌詞數據")) { // Corrected typo
+             if (currentLyricEl && (currentLyricEl.textContent === "無法載入歌詞" || currentLyricEl.textContent === "無歌詞數據")) {
                  currentLyricEl.style.opacity = 1;
-                 currentLyricEl.style.color = currentLyricEl.textContent === "無法載入歌詞" ? 'red' : '#bbb'; // Corrected typo
+                 currentLyricEl.style.color = currentLyricEl.textContent === "無法載入歌詞" ? 'red' : '#bbb';
             } else if (currentLyricEl) {
                  currentLyricEl.textContent = '';
                  currentLyricEl.style.opacity = 0;
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   songTitleEl.style.opacity = 0;
              } else {
                   songTitleEl.style.opacity = 1;
-                  if (currentLyricEl && (currentLyricEl.textContent === "無法載入歌詞" || currentLyricEl.textContent === "無歌詞數據")) { // Corrected typo
+                  if (currentLyricEl && (currentLyricEl.textContent === "無法載入歌詞" || currentLyricEl.textContent === "無歌詞數據")) {
                        currentLyricEl.style.opacity = 1;
                   } else if (currentLyricEl) {
                        if (prevLyricEl) prevLyricEl.style.opacity = 0;
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
              if (prevLyricEl) { prevLyricEl.style.color = '#bbb'; }
              if (nextLyricEl) { nextLyricEl.style.color = '#bbb'; }
 
-             if (currentLyricEl && (currentLyricEl.textContent === "無法載入歌詞" || currentLyricEl.textContent === "無歌詞數據")) { // Corrected typo
+             if (currentLyricEl && (currentLyricEl.textContent === "無法載入歌詞" || currentLyricEl.textContent === "無歌詞數據")) {
                   currentLyricEl.style.opacity = 1;
                   if (prevLyricEl) prevLyricEl.style.opacity = 0;
                   if (nextLyricEl) nextLyricEl.style.opacity = 0;
@@ -292,11 +292,11 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
          backgroundMusic.onpause = () => {
-             console.log("🎵 音訊狀態變為：已暫停");
+             console.log("🎵 音訊狀態變為：已暫停。"); // Added log
              isPlaying = false;
              if (playerPlayPauseBtn) playerPlayPauseBtn.textContent = '▶️';
               if (songTitleEl) songTitleEl.style.opacity = 1;
-              if (currentLyricEl && currentLyricEl.textContent && currentLyricEl.textContent !== "無法載入歌詞" && currentLyricEl.textContent !== "無歌詞數據") { // Corrected typo
+              if (currentLyricEl && currentLyricEl.textContent && currentLyricEl.textContent !== "無法載入歌詞" && currentLyricEl.textContent !== "無歌詞數據") {
                   if (prevLyricEl) prevLyricEl.style.opacity = 0.3;
                   if (currentLyricEl) currentLyricEl.style.opacity = 0.5;
                   if (nextLyricEl) nextLyricEl.style.opacity = 0.3;
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // === 播放/暫停按鈕點擊監聽器 ===
         playerPlayPauseBtn.addEventListener('click', function() {
-            console.log("🖱️ 播放/暫停按鈕被點擊！點擊前的 isPlaying:", isPlaying, " Audio paused:", backgroundMusic.paused);
+            console.log("🖱️ 播放/暫停按鈕被點擊！"); // Simplified log
             // The animation trigger logic for musicPlayer is now in the openingPanels click listener
             // This listener is for the standard play/pause toggle after the player is visible
             if (backgroundMusic.paused) {
@@ -321,11 +321,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // === 進度條拖動監聽器 ===
         if (progressBar && backgroundMusic) {
             progressBar.addEventListener('input', function() {
-                console.log("🖱️ 進度條被拖動到:", progressBar.value);
+                console.log("🖱️ 進度條 'input' 事件觸發，值:", progressBar.value); // Added event type to log
                 backgroundMusic.currentTime = progressBar.value;
                  updateLyricDisplay(backgroundMusic.currentTime);
             });
              progressBar.addEventListener('change', function() {
+                   console.log("🖱️ 進度條 'change' 事件觸發，值:", progressBar.value); // Added event type to log
                    if (!backgroundMusic.paused && isPlaying) {
                        console.log("🖱️ 進度條拖動結束，恢復播放...");
                        backgroundMusic.play().catch(e => console.log("恢復播放失敗:", e));
@@ -342,24 +343,39 @@ document.addEventListener('DOMContentLoaded', function() {
             if (musicPlayer.classList.contains('player-initial')) {
                 console.log("▶️ 觸發音樂播放器動畫：從初始狀態彈出。");
                  musicPlayer.classList.remove('player-initial');
-                 const playerExpandDuration = 600; // Should match CSS transition duration
-                 const contentFadeDelay = 400; // Delay before content fades in and interaction is enabled
+                 const playerExpandDuration = 600;
+                 const contentFadeDelay = 400;
 
                  setTimeout(() => {
                       const controls = musicPlayer.querySelector('.player-controls');
                       const info = musicPlayer.querySelector('.player-info');
+
                       if (controls) {
                            controls.classList.add('content-visible');
                            // === 直接設定 pointer-events 為 auto ===
                            controls.style.pointerEvents = 'auto';
+                           console.log("⚙️ 設定 .player-controls pointer-events: auto;"); // Added log
                            // ====================================
                       }
                       if (info) {
                            info.classList.add('content-visible');
                            // === 直接設定 pointer-events 為 auto ===
                            info.style.pointerEvents = 'auto';
+                           console.log("⚙️ 設定 .player-info pointer-events: auto;"); // Added log
                            // ====================================
                       }
+                      // === 直接設定播放按鈕和進度條本身的 pointer-events ===
+                      if (playerPlayPauseBtn) {
+                           playerPlayPauseBtn.style.pointerEvents = 'auto';
+                           console.log("⚙️ 設定 #playerPlayPause pointer-events: auto;"); // Added log
+                      }
+                       if (progressBar) {
+                           progressBar.style.pointerEvents = 'auto';
+                           console.log("⚙️ 設定 #progressBar pointer-events: auto;"); // Added log
+                       }
+                      // ======================================================
+
+
                       console.log("▶️ 播放器內容設定為可見狀態 (通過點擊開卡觸發)。");
 
                       // 嘗試音樂自動播放
@@ -385,6 +401,10 @@ document.addEventListener('DOMContentLoaded', function() {
                      info.classList.add('content-visible');
                      info.style.pointerEvents = 'auto'; // Ensure interactive
                  }
+                 // === 直接設定播放按鈕和進度條本身的 pointer-events (再次確保) ===
+                  if (playerPlayPauseBtn) playerPlayPauseBtn.style.pointerEvents = 'auto';
+                  if (progressBar) progressBar.style.pointerEvents = 'auto';
+                 // ==============================================================
 
                   if (backgroundMusic.paused) {
                        console.log("🎵 嘗試播放音樂...");
