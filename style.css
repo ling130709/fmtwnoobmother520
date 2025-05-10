@@ -1,0 +1,341 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans TC', sans-serif; /* 思源黑體 */
+    background: linear-gradient(to bottom, #ffc3a0, #ffafbd); /* 溫暖漸層背景 */
+    display: flex; /* Flexbox 讓 #container 置中 */
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* 至少佔滿視窗高 */
+    color: #333;
+    overflow-y: auto; /* 允許 body 滾動 */
+    overflow-x: hidden; /* 防止水平滾動 */
+    /* === 給 body 底部增加內邊距，避免播放器遮擋內容 === */
+    padding-bottom: 80px; /* 播放器高度 + 底部距離 + 一些額外空間 */
+}
+
+#container {
+    position: relative; /* 讓子元素絕對定位 */
+    width: 100%;
+    min-height: 100vh; /* 確保容器至少佔滿視窗高 */
+    display: flex; /* Flexbox 讓 #cardContent 置中 */
+    justify-content: center;
+    align-items: center;
+    padding: 20px; /* 容器內邊距 */
+    box-sizing: border-box; /* 內邊距包含在寬高內 */
+}
+
+/* ====== 開場面板樣式 ====== */
+#opening-panels {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.panel {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background-color: #ffafbd;
+    transition: transform 1s ease-in-out;
+}
+
+.left-panel {
+    left: 0;
+    transform-origin: left center;
+}
+
+.right-panel {
+    right: 0;
+    transform-origin: right center;
+}
+
+.left-panel.open { transform: translateX(-100%); }
+.right-panel.open { transform: translateX(100%); }
+
+#opening-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    transition: opacity 0.5s ease-in-out;
+    z-index: 11;
+}
+
+#opening-text h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+#opening-text p {
+    font-size: 1.5em;
+}
+/* ====== 開場面板樣式結束 ====== */
+
+
+/* ====== 卡片內容樣式 ====== */
+#cardContent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    pointer-events: none;
+    z-index: 5;
+    box-sizing: border-box;
+}
+
+#cardContent.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.card {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    /* 設定最大高度並允許內部滾動 */
+    max-height: 80vh; /* 卡片最大高度為視窗高度的 80% */
+    overflow-y: auto; /* 垂直滾動條 */
+    overflow-x: hidden; /* 隱藏水平滾動條 */
+    box-sizing: border-box;
+    /* 增加底部內邊距，讓內容可以滾到底 */
+    padding-bottom: 40px;
+}
+
+.card h1 {
+    color: #d62d20;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 2.5em;
+}
+
+/* === 響應式圖片樣式 === */
+.mom-photo {
+    max-width: 100%; /* 最大寬度不超過父容器 */
+    height: auto; /* 高度自動，保持比例 */
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* 讓圖片獨佔一行並水平居中 */
+    display: block;
+    margin: 10px auto 20px auto; /* 上10px, 左右自動(居中), 下20px */
+    /* 如果需要像素上限，例如手機上不超過250px，寬螢幕隨容器 */
+    /* max-width: 250px; */
+}
+
+.message {
+    font-size: 1.2em;
+    line-height: 1.6;
+    color: #555;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.signature {
+    font-size: 1.1em;
+    color: #888;
+    text-align: right;
+    margin-top: 20px;
+}
+
+/* 初始隱藏卡片內容容器 */
+.hidden {
+    display: none;
+}
+/* ====== 卡片內容樣式結束 ====== */
+
+
+/* ====== 音訊播放器樣式 ====== */
+#musicPlayer {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    /* 最終狀態的 transform */
+    transform: translateX(-50%) scale(1); /* 最終為正常大小 */
+    width: 95%; /* 最終寬度 */
+    max-width: 400px; /* 最終最大寬度 */
+    height: 60px; /* 最終高度 (包含歌詞) */
+    background-color: rgba(0, 0, 0, 0.7); /* 最終背景色 */
+    color: white; /* 最終文字顏色 */
+    border-radius: 30px; /* 最終圓角 */
+    display: flex;
+    align-items: center;
+    padding: 5px 15px; /* 最終內邊距 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-sizing: border-box;
+    overflow: hidden; /* 隱藏初始狀態下超出的小內容 */
+
+    /* === 動畫過渡效果 === */
+    transition: width 0.6s ease-out, height 0.6s ease-out, padding 0.6s ease-out, border-radius 0.6s ease-out, transform 0.6s ease-out, background-color 0.6s ease-out;
+    opacity: 1; /* 播放器在初始和結束狀態都是可見的 */
+}
+
+/* === 播放器的初始狀態 (.player-initial) === */
+#musicPlayer.player-initial {
+    /* 縮小後的尺寸和形狀 */
+    width: 120px; /* 初始寬度範例 */
+    height: 35px; /* 初始高度範例 */
+    border-radius: 18px; /* 初始圓角範例 */
+    padding: 0; /* 初始無內邊距 */
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.9); /* 初始黑色背景 */
+    /* 保持水平置中，並稍微縮小視覺效果 */
+    transform: translate(-50%, 0) scale(0.9); /* 初始整體稍微縮小 */
+}
+
+
+/* 播放器內部控制區 */
+.player-controls {
+    flex-shrink: 0;
+    margin-right: 10px;
+}
+
+#playerPlayPause {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2em;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+/* 播放器資訊區 (歌名, 歌詞, 進度條) */
+.player-info {
+    flex-grow: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* 歌名樣式 */
+.song-title {
+    font-size: 0.85em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    height: 1.2em;
+    line-height: 1.2em;
+    opacity: 1;
+    transition: opacity 0.3s ease-out;
+    flex-shrink: 0;
+}
+
+/* === 歌詞行樣式 === */
+.lyric-line {
+    font-size: 0.9em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    margin-bottom: 2px;
+    height: 1.3em;
+    line-height: 1.3em;
+    color: #ddd;
+    opacity: 0; /* 初始隱藏 */
+    transition: opacity 0.4s ease-out;
+    flex-shrink: 0;
+}
+
+/* 進度條區域 */
+.progress-area {
+    display: flex;
+    align-items: center;
+    font-size: 0.8em;
+    flex-shrink: 0;
+}
+
+/* 進度條 input 樣式 */
+#progressBar {
+    flex-grow: 1;
+    margin: 0 8px;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #ffffff55;
+    outline: none;
+    opacity: 0.9;
+    transition: opacity .2s;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+#progressBar:hover {
+    opacity: 1;
+}
+
+/* 進度條拖動點的樣式 */
+#progressBar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+#progressBar::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* 時間顯示 */
+.current-time, .duration {
+    font-size: 0.9em;
+    width: 35px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+
+/* 播放器內部內容的初始狀態 (隱藏) */
+#musicPlayer.player-initial .player-controls,
+#musicPlayer.player-initial .player-info {
+     opacity: 0;
+     pointer-events: none;
+     transform: translateY(0); /* 在小播放器裡保持原位 */
+     transition-delay: 0s; /* 初始狀態下不延遲過渡 */
+}
+
+/* 播放器內部內容的最終狀態 (顯示) */
+#musicPlayer .player-controls.content-visible,
+#musicPlayer .player-info.content-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition-delay: 0.5s; /* 最終狀態下，內容淡入延遲 0.5 秒 */
+}
+/* ====== 音訊播放器樣式結束 ====== */
