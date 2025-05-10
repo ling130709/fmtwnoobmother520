@@ -244,18 +244,18 @@ body {
     flex-shrink: 0;
 }
 
-/* === 歌詞行樣式 === */
 .lyric-line {
-    font-size: 0.9em;
+    /* ... 原有樣式 ... */
+    font-size: 1em; /* <-- 調整這個值，例如 1em, 1.1em, 1.2em 等 */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: center;
     margin-bottom: 2px;
-    height: 1.3em;
-    line-height: 1.3em;
+    height: 1.3em; /* <-- 可能需要根據新的 font-size 調整這個值 */
+    line-height: 1.3em; /* <-- 與 height 保持一致 */
     color: #ddd;
-    opacity: 0; /* 初始隱藏 */
+    opacity: 0;
     transition: opacity 0.4s ease-out;
     flex-shrink: 0;
 }
