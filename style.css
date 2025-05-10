@@ -252,8 +252,8 @@ body {
     text-overflow: ellipsis;
     text-align: center;
     margin-bottom: 2px;
-    height: 1.3em; /* <-- 可能需要根據新的 font-size 調整這個值 */
-    line-height: 1.3em; /* <-- 與 height 保持一致 */
+    height: 3em; /* <-- 可能需要根據新的 font-size 調整這個值 */
+    line-height: 3em; /* <-- 與 height 保持一致 */
     color: #ddd;
     opacity: 0;
     transition: opacity 0.4s ease-out;
