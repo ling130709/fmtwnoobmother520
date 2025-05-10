@@ -54,22 +54,22 @@ body {
 /* ====== 卡片內容樣式結束 ====== */
 
 
-/* ====== 音訊播放器樣式 (單行歌詞版本) ====== */
+/* ====== 音訊播放器樣式 ====== */
 #musicPlayer {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) scale(1);
-    width: 95%; max-width: 400px; height: 60px; /* 單行歌詞固定高度 */
+    width: 95%; max-width: 400px; height: auto; min-height: 75px;
     background-color: rgba(0, 0, 0, 0.7); color: white; border-radius: 30px;
     display: flex; align-items: center; padding: 5px 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     z-index: 100; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-sizing: border-box;
     overflow: hidden;
-    transition: width 0.6s ease-out, height 0.6s ease-out, padding 0.6s ease-out, border-radius 0.6s ease-out, transform 0.6s ease-out, background-color 0.6s ease-out;
+    transition: width 0.6s ease-out, height 0.6s ease-out, min-height 0.6s ease-out, padding 0.6s ease-out, border-radius 0.6s ease-out, transform 0.6s ease-out, background-color 0.6s ease-out;
     opacity: 1;
 }
 
 /* === 播放器的初始狀態 (.player-initial) === */
 #musicPlayer.player-initial {
     width: 120px; height: 35px; border-radius: 18px; padding: 0; opacity: 1;
-    background-color: rgba(0, 0, 0, 0.9); transform: translate(-50%, 0) scale(0.9);
+    background-color: rgba(0, 0, 0, 0.9); transform: translate(-50%, 0) scale(0.9); min-height: 35px;
 }
 
 /* 播放器內部控制區 */
@@ -80,25 +80,45 @@ body {
     display: flex; align-items: center; justify-content: center; height: 100%;
 }
 
-/* 播放器資訊區 (歌名, 歌詞, 進度條) */
+/* 播放器資訊區 (歌名, 歌詞容器, 進度條) */
 .player-info {
     flex-grow: 1; overflow: hidden; display: flex; flex-direction: column;
-    justify-content: center; /* 垂直居中内容 */
+    justify-content: center; gap: 2px;
 }
 
 /* 歌名樣式 */
 .song-title {
     font-size: 0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     text-align: left; height: 1.2em; line-height: 1.2em; opacity: 1; transition: opacity 0.3s ease-out;
-    flex-shrink: 0; margin-bottom: 2px;
+    flex-shrink: 0;
 }
 
-/* === 單行歌詞樣式 === */
+/* === 歌詞顯示容器樣式 === */
+.lyric-display-container {
+    flex-grow: 1; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; overflow: hidden;
+    height: 3.5em; /* === 固定高度，需要根據字體大小調整 === */
+    margin: 2px 0;
+}
+
+/* === 基礎歌詞行樣式 (適用於 prev, current, next) === */
 .lyric-line {
-    font-size: 0.9em; /* 單行歌詞字體大小 */
+    font-size: 1em; /* === 基礎字體大小，可以調整 === */
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;
-    margin-bottom: 2px; height: 1.3em; line-height: 1.3em; color: #ddd; opacity: 0;
-    transition: opacity 0.4s ease-out; flex-shrink: 0;
+    width: 100%; line-height: 1.2; transition: opacity 0.2s ease-out, color 0.2s ease-out, font-size 0.2s ease-out;
+}
+
+/* === 當前歌詞行樣式 === */
+.lyric-line.current-lyric {
+    font-size: 1.1em; /* 當前歌詞稍微大一點 */
+    color: white; opacity: 1;
+}
+
+/* === 前一句和後一句歌詞樣式 === */
+.lyric-line.prev-lyric,
+.lyric-line.next-lyric {
+    font-size: 0.9em; /* 前後句小一點 */
+    color: #bbb; opacity: 0.7;
 }
 
 /* 進度條區域 */
