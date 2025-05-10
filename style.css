@@ -246,7 +246,7 @@ body {
 
 .lyric-line {
     /* ... 原有樣式 ... */
-    font-size: 1em; /* <-- 調整這個值，例如 1em, 1.1em, 1.2em 等 */
+    font-size: 3em; /* <-- 調整這個值，例如 1em, 1.1em, 1.2em 等 */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
