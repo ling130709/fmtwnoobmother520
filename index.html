@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>給最愛的媽咪~~母親節快樂！</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="container">
+                <div id="opening-panels">
+            <div class="panel left-panel"></div>
+            <div class="panel right-panel"></div>
+                        <div id="opening-text">
+                 <h1>點這裡打開驚喜:></h1>
+                 <p>給親愛的媽咪</p>
+            </div>
+        </div>
+
+                <div id="cardContent" class="hidden">
+            <div class="card">
+                <h1>母親節快樂！</h1>
+
+                <img src="pngpng.png" alt="這就是驚喜:>" class="mom-photo">
+                <p class="message">
+          親愛的媽咪：<br><br>
+謝謝您一直以來的愛跟支持:D 您是世界上最棒的媽媽:)<br><br>
+在這個特別的日子，祝您健康平安、每天都開開心心！<br><br>
+永遠愛您！<br><br>
+回想起小時候，您總是耐心教導我每一個生活中的小細節，牽著我的手學走路，假日陪著我下午複習準備考試，那些溫暖的畫面至今仍清晰地烙印在腦海裡。無論我遇到什麼困難，您總是我的避風港，給我最堅實的後盾和最真誠的鼓勵。您的愛就像陽光一樣，溫暖著我成長的每一個階段。<br><br>
+
+每一次禮拜日，您總是準備一桌我愛吃的菜，看著我開心吃飯的樣子，您的臉上就洋溢著滿足的笑容。這些看似平凡的日常，都是我心中最珍貴的寶藏。<br><br>
+
+或許我不是最聽話的孩子，也常常讓您操心，但請相信，我心裡對您的感激和愛是無法用言語表達的。您為了這個家付出了太多太多，犧牲了自己的時間和精力，只為了給我們更好的生活。您的辛勞我都看在眼裡，記在心裡。<br><br>
+
+希望您不要太過操勞，多花點時間在自己身上，去嘗試那些您一直想做卻沒時間做的事情。有時候去玩也好，請一定要好好享受生活！您的健康和快樂是我最大的願望。<br><br>
+
+未來，我希望能成為您依靠的力量，換我來照顧您，陪伴您。就像您當年無微不至地照顧我一樣。願我們能一起創造更多美好的回憶，一起分享生活中的點點滴滴。<br><br>
+
+千言萬語都道不盡我對您的愛和感激。感謝上天讓我成為您的孩子，這是此生最大的幸運。願您母親節充滿溫馨和喜悅，每一天都比昨天更快樂！<br><br>
+
+                       林祉龍敬上
+                </p>
+
+                <div class="signature">
+                    🌸💖💐
+                </div>
+            </div>
+        </div>
+    </div>
+
+      <audio id="backgroundMusic" loop>
+        <source src="聽媽媽的話.mp3" type="audio/mpeg">
+        你的瀏覽器不支援音訊播放。
+    </audio>
+
+    <div id="musicPlayer">
+        <div class="player-controls">
+            <button id="playerPlayPause">▶️</button>
+        </div>
+        <div class="player-info">
+            <div class="song-title"></div>
+            <div class="lyric-line"></div>
+            <div class="progress-area">
+                <span class="current-time">0:00</span>
+                <input type="range" id="progressBar" value="0" step="0.1" min="0">
+                <span class="duration">0:00</span>
+            </div>
+        </div>
+    </div>
+            <script src="script.js"></script>
+</body>
+</html>
