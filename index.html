@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>給最愛的媽咪~~母親節快樂！</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>給最愛的媽咪~~母親節快樂！</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div id="container">
-                <div id="opening-panels">
-            <div class="panel left-panel"></div>
-            <div class="panel right-panel"></div>
-                        <div id="opening-text">
-                 <h1>點這裡打開驚喜:></h1>
-                 <p>給親愛的媽咪</p>
-            </div>
-        </div>
+    <div id="container">
+        <div id="opening-panels">
+            <div class="panel left-panel"></div>
+            <div class="panel right-panel"></div>
+            <div id="opening-text">
+                <h1>點這裡打開驚喜:></h1>
+                <p>給親愛的媽咪</p>
+            </div>
+        </div>
 
-                <div id="cardContent" class="hidden">
-            <div class="card">
-                <h1>母親節快樂！</h1>
+        <div id="cardContent" class="hidden">
+            <div class="card">
+                <h1>母親節快樂！</h1>
 
-                <img src="pngpng.png" alt="這就是驚喜:>" class="mom-photo">
-                <p class="message">
-          親愛的媽咪：<br><br>
+                <img src="pngpng.png" alt="這就是驚喜:>" class="mom-photo">
+
+                <p class="message">
+親愛的媽咪：<br><br>
 謝謝您一直以來的愛跟支持:D 您是世界上最棒的媽媽:)<br><br>
 在這個特別的日子，祝您健康平安、每天都開開心心！<br><br>
 永遠愛您！<br><br>
@@ -52,24 +53,25 @@
     </div>
 
       <audio id="backgroundMusic" loop>
-        <source src="聽媽媽的話.mp3" type="audio/mpeg">
+                <source src="song.mp3" type="audio/mpeg">
         你的瀏覽器不支援音訊播放。
     </audio>
 
-    <div id="musicPlayer">
-        <div class="player-controls">
-            <button id="playerPlayPause">▶️</button>
-        </div>
-        <div class="player-info">
-            <div class="song-title"></div>
-            <div class="lyric-line"></div>
-            <div class="progress-area">
-                <span class="current-time">0:00</span>
-                <input type="range" id="progressBar" value="0" step="0.1" min="0">
-                <span class="duration">0:00</span>
-            </div>
-        </div>
-    </div>
-            <script src="script.js"></script>
+    <div id="musicPlayer">
+        <div class="player-controls">
+            <button id="playerPlayPause">▶️</button>
+        </div>
+        <div class="player-info">
+            <div class="song-title"></div>
+            <div class="lyric-display-container">
+                <div class="lyric-line prev-lyric"></div> <div class="lyric-line current-lyric"></div> <div class="lyric-line next-lyric"></div> </div>
+            <div class="progress-area">
+                <span class="current-time">0:00</span>
+                <input type="range" id="progressBar" value="0" step="0.1" min="0">
+                <span class="duration">0:00</span>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
